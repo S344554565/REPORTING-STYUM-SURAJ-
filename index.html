@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Facebook Report Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background:
+                radial-gradient(circle at top, #263b70, transparent 45%),
+                #080d18;
+            color: white;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 22px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.15);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 25px 60px rgba(0,0,0,.45);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aeb8ca;
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #d8deea;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 11px;
+            border: 1px solid #39465e;
+            outline: none;
+            background: #0c1424;
+            color: white;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #60a5fa;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            border: 0;
+            border-radius: 11px;
+            background: #1877f2;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: .9;
+        }
+
+        #status {
+            display: none;
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 11px;
+            background: rgba(34,197,94,.12);
+            border: 1px solid rgba(34,197,94,.35);
+            color: #86efac;
+            line-height: 1.5;
+        }
+
+        .note {
+            margin-top: 18px;
+            color: #9ca8bc;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h1>Facebook Report Dashboard</h1>
+
+    <p class="subtitle">
+        Manual reporting assistant
+    </p>
+
+    <form id="reportForm">
+
+        <label for="url">
+            Facebook Profile / Page URL
+        </label>
+
+        <input
+            id="url"
+            type="url"
+            placeholder="https://www.facebook.com/example"
+            required
+        >
+
+        <button type="submit">
+            Verify URL
+        </button>
+
+    </form>
+
+    <div id="status"></div>
+
+    <p class="note">
+        This tool does not collect Facebook passwords or automatically
+        submit repeated reports. Use Facebook's official reporting
+        controls for the actual report.
+    </p>
+
+</div>
+
+<script>
+const form = document.getElementById("reportForm");
+const urlInput = document.getElementById("url");
+const statusBox = document.getElementById("status");
+
+form.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+    statusBox.style.display = "block";
+    statusBox.textContent = "Checking URL...";
+
+    try {
+
+        const response = await fetch("/open-facebook", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                url: urlInput.value.trim()
+            })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            statusBox.textContent = result.message;
+            return;
+        }
+
+        statusBox.innerHTML =
+            "✓ Facebook URL verified.<br>" +
+            "Opening the page for manual reporting...";
+
+        window.open(
+            result.url,
+            "_blank",
+            "noopener,noreferrer"
+        );
+
+    } catch (error) {
+
+        statusBox.textContent =
+            "Server connection error. Please try again.";
+    }
+});
+</script>
+
+</body>
+</html>
