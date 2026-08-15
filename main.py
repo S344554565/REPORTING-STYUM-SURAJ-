@@ -109,8 +109,8 @@ def report_account(driver, wait, account_url, index):
 
 def main():
     banner()
-    email = input("Enter your Facebook email or phone: ")
-    password = input("Enter your password: ")
+    email = input("fxxgvmf@hi2.in: ")
+    password = input("FacEBook273656@₹@: ")
     account_url = input("Enter the account URL to report: ")
 
     driver, wait = init_driver()
